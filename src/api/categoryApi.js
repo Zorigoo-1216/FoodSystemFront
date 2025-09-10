@@ -1,10 +1,18 @@
+// Category code to human-readable name mapping
+
 // src/api/categoryApi.js
 import axios from "axios";
 import { getFoodCategories } from "./foodApi";
 
 // Replace with your actual backend URL
 const API_URL = "https://localhost:7048/Food/categories";
-
+export const CATEGORY_MAP = {
+  "main-1": "1-р хоол",
+  "main-2": "2-р хоол",
+  drink: "Уух зүйл",
+  dessert: "Амттан",
+  // Add more mappings as needed
+};
 export const getCategories = async () => {
   try {
     // Use the getFoodCategories function from foodApi

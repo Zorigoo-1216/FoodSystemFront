@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { getCategories } from "../api/categoryApi";
 import { ChevronLeft, ChevronRight, List } from "lucide-react";
-
+import { CATEGORY_MAP } from "../api/categoryApi";
 const Sidebar = ({ onSelectCategory }) => {
   const [categories, setCategories] = useState([]);
   const [collapsed, setCollapsed] = useState(false);
