@@ -1,85 +1,166 @@
 // src/api/foodApi.js
-export const getFoods = async (category) => {
-  const allFoods = [
-    {
-      id: 1,
-      name: "Chicken Burger",
-      price: 10000,
-      category: "Burger",
-      image: "/images/chicken-burger.jpg",
-    },
-    {
-      id: 2,
-      name: "Grilled Burger",
-      price: 12000,
-      category: "Burger",
-      image: "/images/grilled-burger.jpg",
-    },
-    {
-      id: 3,
-      name: "Vegetable Pizza",
-      price: 15000,
-      category: "Pizza",
-      image: "/images/veg-pizza.jpg",
-    },
-    {
-      id: 4,
-      name: "Shrimp Basil Salad",
-      price: 11000,
-      category: "Salad",
-      image: "/images/shrimp-salad.jpg",
-    },
-    {
-      id: 5,
-      name: "Fish & Chips",
-      price: 13000,
-      category: "Seafood",
-      image: "/images/fish-chips.jpg",
-    },
-    {
-      id: 6,
-      name: "Onion Rings",
-      price: 8000,
-      category: "Snacks",
-      image: "/images/onion-rings.jpg",
-    },
-    {
-      id: 7,
-      name: "Red Onion Rings",
-      price: 9000,
-      category: "Snacks",
-      image: "/images/red-onion-rings.jpg",
-    },
-    {
-      id: 8,
-      name: "Smoked Bacon",
-      price: 14000,
-      category: "Meat",
-      image: "/images/smoked-bacon.jpg",
-    },
-    {
-      id: 9,
-      name: "Fresh Tomatoes",
-      price: 6000,
-      category: "Vegetables",
-      image: "/images/fresh-tomatoes.jpg",
-    },
-    {
-      id: 10,
-      name: "Beef Burger",
-      price: 13000,
-      category: "Burger",
-      image: "/images/beef-burger.jpg",
-    },
-  ];
 
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      if (category) {
-        resolve(allFoods.filter((f) => f.category === category));
-      } else {
-        resolve(allFoods);
-      }
-    }, 300); // Simulate API delay
-  });
+// Base URL for your API - adjust this to match your backend URL
+const API_BASE_URL = "https://localhost:7048";
+
+// Helper function to handle API responses
+const handleResponse = async (response) => {
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`API Error: ${response.status} - ${errorText}`);
+  }
+  return response.json();
+};
+
+// Get all foods or foods by category
+export const getFoods = async (category = null) => {
+  try {
+    let url = `${API_BASE_URL}/Food`;
+
+    // If category is provided, use the by-category endpoint
+    if (category) {
+      url = `${API_BASE_URL}/Food/by-category?category=${encodeURIComponent(
+        category
+      )}`;
+    }
+
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    return await handleResponse(response);
+  } catch (error) {
+    console.error("Error fetching foods:", error);
+    throw error;
+  }
+};
+
+// Get food by ID
+export const getFoodById = async (foodId) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/Food/${foodId}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    return await handleResponse(response);
+  } catch (error) {
+    console.error("Error fetching food by ID:", error);
+    throw error;
+  }
+};
+// export API_BASE_URL if needed elsewhere
+export { API_BASE_URL };
+// Add new food
+// export const addFood = async (foodData) => {
+//   try {
+//     const response = await fetch(`${API_BASE_URL}/Food`, {
+//       method: "POST",
+//       headers: {
+//         "Content-Type": "application/json",
+//       },
+//       body: JSON.stringify({
+//         foodName: foodData.foodName,
+//         foodCategory: foodData.foodCategory,
+//         foodPrice: foodData.foodPrice,
+//         foodDescription: foodData.foodDescription,
+//         foodImageUrl: foodData.foodImageUrl,
+//       }),
+//     });
+
+//     return await handleResponse(response);
+//   } catch (error) {
+//     console.error("Error adding food:", error);
+//     throw error;
+//   }
+// };
+export const addFood = async (foodData) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/Food/add`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(foodData),
+    });
+
+    return await handleResponse(response);
+  } catch (error) {
+    console.error("Error adding food:", error);
+    throw error;
+  }
+};
+
+// Update existing food
+export const updateFood = async (food) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/Food`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(food),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`API Error: ${response.status} - ${errorText}`);
+    }
+
+    // PUT returns NoContent (204), so no JSON to parse
+    return true;
+  } catch (error) {
+    console.error("Error updating food:", error);
+    throw error;
+  }
+};
+
+// Delete food
+export const deleteFood = async (foodId) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/Food/${foodId}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`API Error: ${response.status} - ${errorText}`);
+    }
+
+    // DELETE returns NoContent (204), so no JSON to parse
+    return true;
+  } catch (error) {
+    console.error("Error deleting food:", error);
+    throw error;
+  }
+};
+
+// Get foods by category (alternative method if you prefer separate function)
+export const getFoodsByCategory = async (category) => {
+  return getFoods(category);
+};
+
+// Get all food categories
+export const getFoodCategories = async () => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/Food/categories`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    return await handleResponse(response);
+  } catch (error) {
+    console.error("Error fetching food categories:", error);
+    return [];
+  }
 };

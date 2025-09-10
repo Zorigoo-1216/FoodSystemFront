@@ -43,6 +43,9 @@ export const OrderProvider = ({ children }) => {
       )
     );
   };
+  const clearOrder = () => {
+    setOrderItems([]);
+  };
 
   return (
     <OrderContext.Provider
@@ -52,6 +55,7 @@ export const OrderProvider = ({ children }) => {
         removeItem,
         increaseQuantity,
         decreaseQuantity,
+        clearOrder,
       }}
     >
       {children}
