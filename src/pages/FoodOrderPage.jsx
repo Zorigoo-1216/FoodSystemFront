@@ -41,7 +41,7 @@ const FoodOrderPage = () => {
     } finally {
       setLoading(false);
     }
-  }, []); // Empty dependency array since getFoods is imported
+  }, []);
 
   useEffect(() => {
     loadFoods(); // Load all foods on initial render

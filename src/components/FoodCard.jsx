@@ -77,13 +77,9 @@ const FoodCard = ({ food, onAdd }) => {
             isOutOfStock ? "text-gray-400" : "text-gray-800"
           }`}
         >
-          {food.price}₮
+          {food.price.toLocaleString()}₮
         </p>
       </div>
-      {/* <div className="flex justify-between w-full px-2 mt-auto">
-        <p className="text-gray-600 text-sm">Үлдэгдэл: {food.stock}</p>
-        <p className="text-gray-800 font-semibold text-sm">{food.price}₮</p>
-      </div> */}
     </div>
   );
 };

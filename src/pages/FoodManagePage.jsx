@@ -106,10 +106,10 @@ const FoodManagePage = () => {
     try {
       const response = await fetch(`${API_BASE_URL}/Food/add`, {
         method: "POST",
-        body: foodFormData, // Send as FormData
+        body: foodFormData,
       });
       if (!response.ok) throw new Error("Failed to add food");
-      const result = await response.json(); // API call
+      const result = await response.json();
 
       const foodItem = {
         id: result.id,
