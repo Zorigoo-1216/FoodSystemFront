@@ -43,9 +43,13 @@ const OrderSummary = () => {
         const errorText = await response.text();
         alert("Захиалга үүсгэхэд алдаа гарлаа: " + errorText);
       } else {
-        const orderId = await response.json();
-        alert("Захиалга амжилттай үүслээ! Order ID: " + orderId);
+        const orderResult = await response.json();
+        alert(
+          "Захиалга амжилттай үүслээ! Захиалгын дугаар: " +
+            orderResult.orderNumber
+        );
         clearOrder();
+        window.location.reload(); // Refresh to update stock
       }
     } catch (err) {
       alert("Сервертэй холбогдох үед алдаа гарлаа");

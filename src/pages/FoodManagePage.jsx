@@ -1,15 +1,17 @@
 // pages/FoodManagePage.jsx
 import React, { useState, useEffect } from "react";
 import { FaEdit, FaPlus } from "react-icons/fa";
-import { addFood } from "../api/foodApi";
 import { getFoods } from "../api/foodApi";
 import { API_BASE_URL } from "../api/foodApi";
 import FoodForm from "../components/FoodForm";
 import InitStockForm from "../components/InitStockForm";
+import OrderList from "../components/OrderList";
+import { CATEGORY_MAP } from "../api/categoryApi";
 const FoodManagePage = () => {
   const [foods, setFoods] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [showInitStockModal, setShowInitStockModal] = useState(false);
+  const [showOrderListModal, setShowOrderListModal] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     price: "",
@@ -181,7 +183,12 @@ const FoodManagePage = () => {
     confirmSaveInitStock();
     window.location.reload();
   };
-
+  const closeOrderList = () => {
+    setShowOrderListModal(false);
+  };
+  const openOrderList = () => {
+    setShowOrderListModal(true);
+  };
   // Confirm save init stock
   const confirmSaveInitStock = async () => {
     const stockList = foods.map((food) => ({
@@ -219,27 +226,58 @@ const FoodManagePage = () => {
 
   return (
     <div className="p-6">
-      <div className="flex justify-between items-center mb-4">
-        <h1 className="text-2xl font-bold">Хоол</h1>
-        <div className="flex gap-2">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 p-4 bg-white rounded-xl shadow-sm border border-gray-100">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-800">
+            🍽️ Хоолны менежмент
+          </h1>
+          {/* <p className="text-gray-600 text-sm mt-1">Хоолны цэсээ удирдах</p> */}
+        </div>
+
+        <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
           <button
             onClick={handleOpenInitStock}
-            className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
+            className="flex items-center justify-center gap-2 bg-gradient-to-r from-green-500 to-green-600 text-white px-5 py-3 rounded-xl hover:from-green-600 hover:to-green-700 transition-all duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
           >
-            <FaPlus />
-            Эхний үлдэгдэл оруулах
+            <FaPlus className="w-4 h-4" />
+            <span className="font-medium">Эхний үлдэгдэл</span>
           </button>
+
           <button
             onClick={() => {
               resetForm();
               setShowForm(true);
             }}
-            className="flex items-center gap-2 bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600"
+            className="flex items-center justify-center gap-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white px-5 py-3 rounded-xl hover:from-blue-600 hover:to-blue-700 transition-all duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
           >
-            <FaPlus /> Шинэ хоол нэмэх
+            <FaPlus className="w-4 h-4" />
+            <span className="font-medium">Шинэ хоол</span>
+          </button>
+
+          <button
+            onClick={openOrderList}
+            className="flex items-center justify-center gap-2 bg-gradient-to-r from-purple-500 to-purple-600 text-white px-5 py-3 rounded-xl hover:from-purple-600 hover:to-purple-700 transition-all duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
+          >
+            <svg
+              className="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+              />
+            </svg>
+            <span className="font-medium">Захиалгууд</span>
           </button>
         </div>
       </div>
+      {showOrderListModal && (
+        <OrderList isOpen={showOrderListModal} onClose={closeOrderList} />
+      )}
       {showForm && (
         <FoodForm
           formData={formData}
@@ -259,64 +297,162 @@ const FoodManagePage = () => {
         handleBackdropClick={handleBackdropClick}
         showInitStockModal={showInitStockModal}
       />
+
       {/* Food Table */}
-      <div className="overflow-x-auto">
-        <table className="w-full table-auto border-collapse border border-gray-300">
-          <thead>
-            <tr className="bg-gray-200">
-              <th className="border px-4 py-2">Зураг</th>
-              <th className="border px-4 py-2">Нэр</th>
-              <th className="border px-4 py-2">Тайлбар</th>
-              <th className="border px-4 py-2">Үнэ</th>
-              <th className="border px-4 py-2">Ангилал</th>
-              <th className="border px-4 py-2">Төлөв</th>
-              <th className="border px-4 py-2">Анхны үлдэгдэл</th>
-              <th className="border px-4 py-2">Үлдэгдэл</th>
-              <th className="border px-4 py-2">Үйлдэл</th>
+      <div className="overflow-x-auto rounded-lg border border-gray-200 shadow-sm">
+        <table className="w-full">
+          <thead className="bg-gradient-to-r from-gray-50 to-gray-100">
+            <tr>
+              <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                Зураг
+              </th>
+              <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                Нэр
+              </th>
+              <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                Тайлбар
+              </th>
+              <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                Үнэ
+              </th>
+              <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                Ангилал
+              </th>
+              <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                Төлөв
+              </th>
+              <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                Анхны үлдэгдэл
+              </th>
+              <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                Үлдэгдэл
+              </th>
+              <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                Огноо
+              </th>
+              <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                Үйлдэл
+              </th>
             </tr>
           </thead>
-          <tbody>
+          <tbody className="bg-white divide-y divide-gray-200">
             {foods.map((food) => (
               <tr
                 key={food.id}
-                className={`${food.stock <= 10 ? "" : ""} hover:bg-gray-100`}
+                className={`transition-colors duration-150 ${
+                  food.stock <= 5
+                    ? "bg-red-50 hover:bg-red-100"
+                    : food.stock <= 10
+                    ? "bg-orange-50 hover:bg-orange-100"
+                    : "hover:bg-gray-50"
+                }`}
               >
-                <td className="border px-4 py-2">
-                  <img
-                    src={food.image}
-                    alt={food.name}
-                    className="w-16 h-16 object-cover rounded"
-                  />
+                <td className="px-6 py-4">
+                  <div className="flex justify-center">
+                    <img
+                      src={food.image}
+                      alt={food.name}
+                      className="w-16 h-16 object-cover rounded-lg shadow-sm border border-gray-200"
+                      // onError={(e) => {
+                      //   e.target.src = "/assets/default.jpg";
+                      // }}
+                    />
+                  </div>
                 </td>
-                <td className="border px-4 py-2">{food.name}</td>
-                <td className="border px-4 py-2">{food.description}</td>
-                <td className="border px-4 py-2">{food.price}₮</td>
-                <td className="border px-4 py-2">{food.category}</td>
-                <td className="border px-4 py-2">
-                  {food.state === "A" ? "Боломжтой" : "Дууссан"}
+                <td className="px-6 py-4">
+                  <div className="text-sm font-medium text-gray-900">
+                    {food.name}
+                  </div>
                 </td>
-                <td className="border px-4 py-2">{food.initQuantity}</td>
-                <td className="border px-4 py-2">{food.stock}</td>
-                <td className="border px-4 py-2">
+                <td className="px-6 py-4">
+                  <div className="text-sm text-gray-600 max-w-xs truncate">
+                    {food.description || "Тайлбаргүй"}
+                  </div>
+                </td>
+                <td className="px-6 py-4">
+                  <div className="text-sm font-semibold text-blue-600">
+                    {food.price?.toLocaleString?.() || "0"}₮
+                  </div>
+                </td>
+                <td className="px-6 py-4">
+                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                    {CATEGORY_MAP[food.category] || "Ангилалгүй"}
+                  </span>
+                </td>
+                <td className="px-6 py-4">
+                  <span
+                    className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                      food.state === "A"
+                        ? "bg-green-100 text-green-800"
+                        : "bg-red-100 text-red-800"
+                    }`}
+                  >
+                    {food.state === "A" ? "✅ Боломжтой" : "❌ Дууссан"}
+                  </span>
+                </td>
+                <td className="px-6 py-4">
+                  <div className="text-sm text-gray-900 font-medium">
+                    {food.initQuantity?.toLocaleString?.() || "0"}
+                  </div>
+                </td>
+                <td className="px-6 py-4">
+                  <div
+                    className={`text-sm font-bold ${
+                      food.stock <= 5
+                        ? "text-red-600"
+                        : food.stock <= 10
+                        ? "text-orange-600"
+                        : "text-green-600"
+                    }`}
+                  >
+                    {food.stock?.toLocaleString?.() || "0"}
+                  </div>
+                  {food.stock <= 10 && (
+                    <div className="text-xs text-gray-500 mt-1">
+                      {food.stock <= 5 ? "⚠️ Яаралтай" : "⏳ Дуусах ойролцоо"}
+                    </div>
+                  )}
+                </td>
+                <td className="px-6 py-4">
+                  <div className="text-sm text-gray-500">
+                    {new Date(food.createdAt).toLocaleDateString("mn-MN", {}) ||
+                      "Огноо мэдэгдэхгүй"}
+                  </div>
+                </td>
+                <td className="px-6 py-4">
                   <div className="flex gap-2">
                     <button
                       onClick={() => handleEditFood(food)}
-                      className="bg-yellow-500 text-white px-2 py-1 rounded hover:bg-yellow-600 flex items-center gap-1"
+                      className="inline-flex items-center px-3 py-2 bg-yellow-500 hover:bg-yellow-600 text-white text-sm font-medium rounded-lg transition-colors duration-200 shadow-sm hover:shadow-md"
                     >
-                      <FaEdit /> Засах
+                      <FaEdit className="w-4 h-4 mr-1" />
+                      Засах
                     </button>
                     <button
-                      className="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600"
                       onClick={() => {
                         if (
                           window.confirm(
-                            "Энэ хоолыг устгахдаа итгэлтэй байна уу?"
+                            "Энэ хоолыг устгахдаа итгэлтэй байна уу?\n\nУстгасан хоолыг дахин сэргээх боломжгүй."
                           )
                         ) {
                           setFoods(foods.filter((f) => f.id !== food.id));
                         }
                       }}
+                      className="inline-flex items-center px-3 py-2 bg-red-500 hover:bg-red-600 text-white text-sm font-medium rounded-lg transition-colors duration-200 shadow-sm hover:shadow-md"
                     >
+                      <svg
+                        className="w-4 h-4 mr-1"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                        />
+                      </svg>
                       Устгах
                     </button>
                   </div>

@@ -60,26 +60,35 @@ const Sidebar = ({ onSelectCategory }) => {
         </button>
 
         {/* Dynamic Categories */}
-        {categories.map((cat) => (
-          <button
-            key={cat.id}
-            className={`w-full flex items-center gap-2 rounded-lg px-3 py-2 transition
-              ${collapsed ? "justify-center" : "text-left"}
-              ${
-                selectedCategory === cat.name
-                  ? "bg-orange-100 text-orange-600 font-semibold"
-                  : "hover:bg-gray-200"
-              }`}
-            onClick={() => handleCategoryClick(cat.name)}
-          >
-            <span
-              className={`w-2 h-2 rounded-full ${
-                selectedCategory === cat.name ? "bg-orange-500" : "bg-gray-400"
-              }`}
-            ></span>
-            {!collapsed && <span>{cat.name}</span>}
-          </button>
-        ))}
+        {categories.map((cat) => {
+          const displayName = CATEGORY_MAP[cat.name] || cat.name;
+
+          return (
+            <button
+              key={cat.id}
+              className={`w-full flex items-center gap-3 rounded-lg px-4 py-3 transition
+        ${collapsed ? "justify-center" : "text-left"}
+        ${
+          selectedCategory === cat.name
+            ? "bg-orange-100 text-orange-700 font-semibold border-l-4 border-orange-500"
+            : "hover:bg-gray-100 text-gray-700"
+        }`}
+              onClick={() => handleCategoryClick(cat.name)}
+              title={collapsed ? displayName : ""}
+            >
+              <span
+                className={`w-3 h-3 rounded-full ${
+                  selectedCategory === cat.name
+                    ? "bg-orange-500"
+                    : "bg-gray-400"
+                }`}
+              ></span>
+              {!collapsed && (
+                <span className="flex-1 truncate">{displayName}</span>
+              )}
+            </button>
+          );
+        })}
       </div>
     </div>
   );

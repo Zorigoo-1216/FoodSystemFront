@@ -11,7 +11,7 @@ const FoodOrderPage = () => {
   const [foods, setFoods] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(true);
-  const { addItem } = useOrder();
+  const { addItem, orderItems } = useOrder();
 
   // Map backend data to frontend structure
   const mapBackendToFrontend = (backendFood) => ({
@@ -47,13 +47,35 @@ const FoodOrderPage = () => {
     loadFoods(); // Load all foods on initial render
   }, [loadFoods]);
 
-  // Filter foods by search query in real-time
-  const filteredFoods = foods.filter(
-    (food) =>
-      food?.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      food?.category?.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const getFoodWithAvailableStock = (food) => {
+    const orderedItem = orderItems.find((item) => item.id === food.id);
+    const orderedQuantity = orderedItem ? orderedItem.quantity : 0;
+    const availableStock = Math.max(0, food.stock - orderedQuantity);
 
+    return {
+      ...food,
+      availableStock,
+    };
+  };
+  // Filter foods by search query in real-time
+
+  const handleAddItem = (food) => {
+    const foodWithStock = getFoodWithAvailableStock(food);
+
+    if (foodWithStock.availableStock <= 0) {
+      alert("Уучлаарай, энэ хоолны үлдэгдэл дууссан байна!");
+      return;
+    }
+
+    addItem(food);
+  };
+  const filteredFoods = foods
+    .filter(
+      (food) =>
+        food?.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        food?.category?.toLowerCase().includes(searchQuery.toLowerCase())
+    )
+    .map((food) => getFoodWithAvailableStock(food));
   if (loading) {
     return (
       <div className="flex h-screen overflow-hidden">
@@ -81,9 +103,9 @@ const FoodOrderPage = () => {
             {searchQuery ? "Хайлтын үр дүн олдсонгүй" : "Хоол олдсонгүй"} 😕
           </p>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-4">
             {filteredFoods.map((food) => (
-              <FoodCard key={food.id} food={food} onAdd={addItem} />
+              <FoodCard key={food.id} food={food} onAdd={handleAddItem} />
             ))}
           </div>
         )}

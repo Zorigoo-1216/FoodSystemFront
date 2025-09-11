@@ -1,54 +1,68 @@
 // Header.jsx
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
+import logo from "../assets/logo.png";
 
 const Header = () => {
+  const location = useLocation();
+
+  const isActive = (path) => {
+    return location.pathname === path;
+  };
+
   return (
-    <header className="bg-orange-500 text-white shadow-md">
-      <div className="container mx-auto flex justify-between items-center p-4">
-        {/* Logo / Title */}
-        <h1 className="text-2xl font-bold flex items-center gap-2">
-          🍜 Хоолны захиалга
-        </h1>
-
-        {/* Navigation */}
-        <nav className="flex gap-4">
-          <Link
-            to="/"
-            className="text-white hover:bg-orange-600 px-3 py-1 rounded transition"
-          >
-            Нүүр хуудас
-          </Link>
-          <Link
-            to="/order"
-            className="text-white hover:bg-orange-600 px-3 py-1 rounded transition"
-          >
-            Хоол захиалга
-          </Link>
-          <Link
-            to="/manage"
-            className="text-white hover:bg-orange-600 px-3 py-1 rounded transition"
-          >
-            Орлого авах
-          </Link>
-        </nav>
-
-        {/* Login Button */}
-        <button className="bg-white text-orange-500 px-4 py-2 rounded-full flex items-center gap-2 hover:bg-gray-100 transition">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-5 w-5"
-            viewBox="0 0 20 20"
-            fill="currentColor"
-          >
-            <path
-              fillRule="evenodd"
-              d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
-              clipRule="evenodd"
+    <header className="bg-gradient-to-r from-orange-500 to-orange-600 text-white shadow-lg">
+      <div className="container mx-auto px-6 py-3">
+        <div className="flex items-center justify-between">
+          {/* Logo / Title */}
+          <div className="flex items-center gap-3">
+            <img
+              src={logo}
+              alt="Logo"
+              className="h-12 w-12 rounded-full border-2 border-white shadow-md"
             />
-          </svg>
-          <span>Нэвтрэх</span>
-        </button>
+            <div>
+              <h1 className="text-2xl font-bold text-white">Хоолны захиалга</h1>
+              <p className="text-orange-100 text-sm">Тавтай морилно уу</p>
+            </div>
+          </div>
+
+          {/* Navigation */}
+          <div className="flex items-center">
+            <nav className="flex items-center gap-1 bg-orange-400/20 rounded-full p-1">
+              <Link
+                to="/"
+                className={`px-5 py-2 rounded-full transition-all duration-200 text-sm font-medium ${
+                  isActive("/")
+                    ? "bg-white text-orange-600 shadow-md font-semibold"
+                    : "text-orange-100 hover:bg-orange-400/30 hover:text-white"
+                }`}
+              >
+                🏠 Нүүр хуудас
+              </Link>
+              <Link
+                to="/order"
+                className={`px-5 py-2 rounded-full transition-all duration-200 text-sm font-medium ${
+                  isActive("/order")
+                    ? "bg-white text-orange-600 shadow-md font-semibold"
+                    : "text-orange-100 hover:bg-orange-400/30 hover:text-white"
+                }`}
+              >
+                🍔 Хоол захиалга
+              </Link>
+              <Link
+                to="/manage"
+                className={`px-5 py-2 rounded-full transition-all duration-200 text-sm font-medium ${
+                  isActive("/manage")
+                    ? "bg-white text-orange-600 shadow-md font-semibold"
+                    : "text-orange-100 hover:bg-orange-400/30 hover:text-white"
+                }`}
+              >
+                💰 Орлого авах
+              </Link>
+            </nav>
+          </div>
+        </div>
       </div>
     </header>
   );

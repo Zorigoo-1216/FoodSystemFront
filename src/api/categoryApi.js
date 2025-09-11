@@ -9,9 +9,15 @@ const API_URL = "https://localhost:7048/Food/categories";
 export const CATEGORY_MAP = {
   "main-1": "1-р хоол",
   "main-2": "2-р хоол",
-  drink: "Уух зүйл",
   dessert: "Амттан",
-  // Add more mappings as needed
+  drink: "Уух зүйл",
+  salad: "Салад",
+  "minced-meat": "Ширхэгийн хоол",
+  breakfast: "Өглөөний цай",
+  vegan: "Цагаан хоол",
+  children: "Хүүхдийн хоол",
+  special: "Тусгай хоол",
+  combo: "Багц хоол",
 };
 export const getCategories = async () => {
   try {
